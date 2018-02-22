@@ -128,11 +128,12 @@ class LambdaPack {
                 let progressBar;
                 if (outputProgressToConsole) {
                     if (outputProgressToConsole)
-                        terminal_kit_1.terminal.blue("Packaging it up...\n");
+                        terminal_kit_1.terminal.blue("Packing it up...\n");
                     progressBar = terminal_kit_1.terminal.progressBar({
                         width: 80
                     });
                 }
+                fs.ensureDirSync(path.dirname(outputFileName));
                 zip.zip(tmpDir.name + "/.", path.resolve(process.cwd(), outputFileName), (error) => {
                     if (outputProgressToConsole) {
                         progressBar.stop();
@@ -143,8 +144,15 @@ class LambdaPack {
             }
         ], (error) => {
             function finish() {
-                if (outputProgressToConsole)
-                    terminal_kit_1.terminal.green("All done!\n");
+                if (outputProgressToConsole) {
+                    if (error) {
+                        terminal_kit_1.terminal.error.red(`Error: ${error.toString()}`);
+                    }
+                    else {
+                        let handlerName = path.relative(process.cwd(), lambdaHandlerFilePath).replace(/.js$/, ".handler");
+                        terminal_kit_1.terminal.blue("You can now upload the file ").yellow(outputFileName).blue(" to AWS Lambda and set the Handler to ").yellow(handlerName).blue(".\n");
+                    }
+                }
                 if (callback)
                     callback(error);
             }

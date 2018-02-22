@@ -24,4 +24,12 @@ if(_.isNil(lambdaHandlerFile) || _.isNil(outputZipFileName))
     process.exit(1);
 }
 
-LambdaPack.package(lambdaHandlerFile, otherFiles, outputZipFileName, !commander.quiet);
+LambdaPack.package(lambdaHandlerFile, otherFiles, outputZipFileName, !commander.quiet, true, (error) => {
+    if(error)
+    {
+        process.exit(1);
+        return;
+    }
+
+    process.exit();
+});
