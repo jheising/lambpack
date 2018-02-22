@@ -7,8 +7,11 @@ let lambdaHandlerFile;
 let outputZipFileName;
 let otherFiles;
 
+let packageJSON = require("../package.json");
+
 commander
-    .version(require("../package.json").version)
+    .version(packageJSON.version)
+    .description(packageJSON.description)
     .arguments("<lambdaHandlerFile> <outputZipFileName> [otherFiles...]")
     .action(function (_lambdaHandlerFile, _outputZipFileName, _otherFiles) {
         lambdaHandlerFile = _lambdaHandlerFile;
