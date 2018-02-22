@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "inlineSources": true,
+        "declaration" : true,
+        "target": "ES6",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "typeRoots": ["node_modules/@types"],
+        "experimentalDecorators": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

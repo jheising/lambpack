@@ -1,0 +1,42 @@
+{
+  "name": "lambda-pack",
+  "version": "1.0.0",
+  "description": "A no nonsense Lambda function packager— walks the dependency tree of a lambda handler and packages it up into a .zip file suitable for uploading to AWS Lambda.",
+  "main": "LambdaPack.js",
+  "scripts": {
+    "build": "./node_modules/.bin/tsc"
+  },
+  "homepage": "https://github.com/jheising/lambda-pack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jheising/lambda-pack.git"
+  },
+  "keywords": [
+    "AWS",
+    "lambda",
+    "package",
+    "serverless",
+    "deployment"
+  ],
+  "author": "Jim Heising <jheising@gmail.com>",
+  "license": "ISC",
+  "bin": {
+    "lambda-pack": "bin/cli.js"
+  },
+  "dependencies": {
+    "async": "^2.6.0",
+    "commander": "^2.14.1",
+    "cross-zip": "^2.1.5",
+    "find-up": "^2.1.0",
+    "fs-extra": "^5.0.0",
+    "is-builtin-module": "^2.0.0",
+    "lodash": "^4.17.5",
+    "module-walker": "^3.0.2",
+    "terminal-kit": "^1.14.3",
+    "tmp": "0.0.33"
+  },
+  "devDependencies": {
+    "@types/node": "^9.4.6",
+    "typescript": "^2.7.2"
+  }
+}
