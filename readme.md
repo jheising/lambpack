@@ -33,3 +33,5 @@ $ lambda-pack
 $ cd my_project
 $ lambda-pack lambda.js ./deploy/lambda.zip
 ```
+
+Follow the instructions to upload and enjoy your serverless existence!
