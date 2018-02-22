@@ -1,16 +1,16 @@
-# lambda-pack
+# lambpack
 
 A no nonsense AWS Lambda function packager for node.js— it walks the dependency tree of a lambda handler source file and packages it up into a .zip file suitable for uploading to AWS Lambda.
 
 ### Installing It
 
-`npm install lambda-pack -g`
+`npm install lambpack -g`
 
 ### Using It
 ```
-$ lambda-pack
+$ lambpack
 
-  Usage: lambda-pack [options] <lambdaHandlerFile> <outputZipFileName> [otherFiles...]
+  Usage: lambpack [options] <lambdaHandlerFile> <outputZipFileName> [otherFiles...]
 
 
   Options:
@@ -31,7 +31,7 @@ $ lambda-pack
 
 ```
 $ cd my_project
-$ lambda-pack lambda.js ./deploy/lambda.zip
+$ lambpack lambda.js ./deploy/lambda.zip
 ```
 
 Follow the instructions to upload and enjoy your serverless existence!
