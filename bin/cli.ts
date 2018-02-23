@@ -2,6 +2,7 @@
 import * as commander from "commander";
 import {LambdaPack} from "../LambdaPack";
 import * as _ from "lodash";
+const uuidv3 = require('uuid/v3');
 
 let lambdaHandlerFile;
 let outputZipFileName;

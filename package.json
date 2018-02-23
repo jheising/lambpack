@@ -1,6 +1,6 @@
 {
   "name": "lambpack",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A no nonsense AWS Lambda function packager for node.js— it walks the dependency tree of a lambda handler source file and packages it up into a .zip file suitable for uploading to AWS Lambda.",
   "main": "LambdaPack.js",
   "scripts": {

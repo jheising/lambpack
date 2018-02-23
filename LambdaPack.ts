@@ -53,6 +53,12 @@ export class LambdaPack {
                                 return;
                             }
 
+                            // Deal with scoped packages
+                            if(moduleName.indexOf("@") !== 0)
+                            {
+                                moduleName = moduleName.replace(/\/.*$/, "");
+                            }
+
                             if (installedPackages && installedPackages[moduleName]) {
                                 moduleVersion = installedPackages[moduleName];
                             }
