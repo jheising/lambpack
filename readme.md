@@ -35,3 +35,5 @@ $ lambpack lambda.js ./deploy/lambda.zip
 ```
 
 Follow the instructions to upload and enjoy your serverless existence!
+
+Note: lambpack won't automagically solve the issue of packaging modules with native code— in which case you'll need to run lambpack on an AWS Linux EC2 instance. Check out [lambda-packager](https://www.npmjs.com/package/lambda-packager) if you want a more complex to setup, but very full-featured packager. 
