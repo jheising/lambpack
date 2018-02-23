@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const commander = require("commander");
 const LambdaPack_1 = require("../LambdaPack");
 const _ = require("lodash");
-const uuidv3 = require('uuid/v3');
 let lambdaHandlerFile;
 let outputZipFileName;
 let otherFiles;
