@@ -2,6 +2,7 @@
 import * as commander from "commander";
 import {LambdaPack} from "../LambdaPack";
 import * as _ from "lodash";
+import {terminal} from "terminal-kit";
 
 let lambdaHandlerFile;
 let outputZipFileName;
@@ -24,15 +25,15 @@ commander
 if(_.isNil(lambdaHandlerFile) || _.isNil(outputZipFileName))
 {
     commander.outputHelp();
-    process.exit(1);
+    terminal.processExit(1);
 }
 
 LambdaPack.package(lambdaHandlerFile, otherFiles, outputZipFileName, !commander.quiet, true, (error) => {
     if(error)
     {
-        process.exit(1);
+        terminal.processExit(1);
         return;
     }
 
-    process.exit();
+    terminal.processExit(0);
 });

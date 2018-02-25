@@ -1,6 +1,6 @@
 # lambpack
 
-A no nonsense AWS Lambda function packager for node.js— it walks the dependency tree of a lambda handler source file and packages it up into a .zip file suitable for uploading to AWS Lambda.
+A no nonsense AWS Lambda function packager for node.js— it walks the dependency tree of a lambda handler source file and packages it up into a the smallest .zip file suitable for uploading to AWS Lambda.
 
 ### Installing It
 

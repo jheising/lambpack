@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const commander = require("commander");
 const LambdaPack_1 = require("../LambdaPack");
 const _ = require("lodash");
+const terminal_kit_1 = require("terminal-kit");
 let lambdaHandlerFile;
 let outputZipFileName;
 let otherFiles;
@@ -21,13 +22,13 @@ commander
     .parse(process.argv);
 if (_.isNil(lambdaHandlerFile) || _.isNil(outputZipFileName)) {
     commander.outputHelp();
-    process.exit(1);
+    terminal_kit_1.terminal.processExit(1);
 }
 LambdaPack_1.LambdaPack.package(lambdaHandlerFile, otherFiles, outputZipFileName, !commander.quiet, true, (error) => {
     if (error) {
-        process.exit(1);
+        terminal_kit_1.terminal.processExit(1);
         return;
     }
-    process.exit();
+    terminal_kit_1.terminal.processExit(0);
 });
 //# sourceMappingURL=cli.js.map

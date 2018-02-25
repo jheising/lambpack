@@ -1,7 +1,7 @@
 {
   "name": "lambpack",
-  "version": "1.0.3",
-  "description": "A no nonsense AWS Lambda function packager for node.js— it walks the dependency tree of a lambda handler source file and packages it up into a .zip file suitable for uploading to AWS Lambda.",
+  "version": "1.0.4",
+  "description": "A no nonsense AWS Lambda function packager for node.js— it walks the dependency tree of a lambda handler source file and packages it up into a the smallest .zip file suitable for uploading to AWS Lambda.",
   "main": "LambdaPack.js",
   "scripts": {
     "build": "./node_modules/.bin/tsc"
@@ -27,11 +27,11 @@
     "async": "^2.6.0",
     "commander": "^2.14.1",
     "cross-zip": "^2.1.5",
+    "dependency-tree": "^6.0.0",
     "find-up": "^2.1.0",
     "fs-extra": "^5.0.0",
     "is-builtin-module": "^2.0.0",
     "lodash": "^4.17.5",
-    "module-walker": "^3.0.2",
     "terminal-kit": "^1.14.3",
     "tmp": "0.0.33"
   },

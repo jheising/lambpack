@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
 const child_process_1 = require("child_process");
 const path = require("path");
-const walker = require("module-walker");
 const _ = require("lodash");
 const terminal_kit_1 = require("terminal-kit");
 const async = require("async");
@@ -11,15 +10,19 @@ const findUp = require("find-up");
 const tmp = require("tmp");
 const isBuiltinModule = require("is-builtin-module");
 const zip = require("cross-zip");
+const dependencyTree = require("dependency-tree");
 class LambdaPack {
     static package(lambdaHandlerFilePath, otherFiles, outputFileName, outputProgressToConsole = true, excludeAWSSDK = true, callback) {
         let tmpDir;
+        let baseDir = path.dirname(lambdaHandlerFilePath);
         async.waterfall([
             // Find a package.json file in the path
             (done) => {
                 if (outputProgressToConsole)
                     terminal_kit_1.terminal.blue("Finding package.json...\n");
-                findUp("package.json").then(filepath => {
+                findUp("package.json", {
+                    cwd: baseDir
+                }).then(filepath => {
                     if (outputProgressToConsole)
                         terminal_kit_1.terminal(`package.json file ${filepath ? "was found at " + filepath : "was not found"}\n`);
                     done(null, filepath);
@@ -34,20 +37,31 @@ class LambdaPack {
                     packageJSON = require(packageJSONFile);
                     installedPackages = packageJSON.dependencies;
                 }
-                walker({}).walk(lambdaHandlerFilePath).then((nodes) => {
-                    let requiredModules = {};
-                    let requiredLocalFiles = [];
-                    _.each(nodes, (node) => {
-                        if (node.foreign) {
-                            let moduleName = node.id;
+                let requiredModules = {};
+                let requiredFiles = dependencyTree.toList({
+                    filename: lambdaHandlerFilePath,
+                    directory: baseDir,
+                    nodeModulesConfig: {
+                        entry: 'module'
+                    },
+                    filter: (absolutePath) => {
+                        let isModule = false;
+                        let match = /\/node_modules\/(.+?)\//.exec(absolutePath);
+                        // This is a node module
+                        if (match && match.length >= 2) {
+                            isModule = true;
+                            let moduleName = match[1];
                             let moduleVersion = "*";
-                            // Skip built in modules
-                            if (isBuiltinModule(moduleName)) {
-                                return;
+                            if (excludeAWSSDK && moduleName === "aws-sdk") {
+                                return false;
                             }
                             // Deal with scoped packages
                             if (moduleName.indexOf("@") !== 0) {
                                 moduleName = moduleName.replace(/\/.*$/, "");
+                            }
+                            // Skip built-in modules and modules already added
+                            if (isBuiltinModule(moduleName) || (moduleName in requiredModules)) {
+                                return false;
                             }
                             if (installedPackages && installedPackages[moduleName]) {
                                 moduleVersion = installedPackages[moduleName];
@@ -56,17 +70,15 @@ class LambdaPack {
                             if (outputProgressToConsole)
                                 terminal_kit_1.terminal("Found module: ").green.noFormat(`${moduleName} (${moduleVersion})\n`);
                         }
-                        else {
-                            requiredLocalFiles.push(node.filename);
-                            if (outputProgressToConsole)
-                                terminal_kit_1.terminal("Found file: ").blue.noFormat(`${node.filename}\n`);
-                        }
-                    });
-                    if (excludeAWSSDK) {
-                        delete requiredModules["aws-sdk"];
+                        return !isModule;
                     }
-                    done(null, requiredModules, requiredLocalFiles, packageJSON);
                 });
+                if (outputProgressToConsole) {
+                    for (let file of requiredFiles) {
+                        terminal_kit_1.terminal("Found file: ").green.noFormat(`${file}\n`);
+                    }
+                }
+                done(null, requiredModules, requiredFiles, packageJSON);
             },
             (requiredModules, requiredLocalFiles, packageJSON, done) => {
                 // Create a temporary directory
