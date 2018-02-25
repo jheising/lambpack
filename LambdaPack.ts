@@ -24,7 +24,14 @@ export class LambdaPack {
                     cwd: baseDir
                 }).then(filepath => {
 
+                    if(_.isNil(filepath))
+                    {
+                        done("No package.json file found in parent directory.");
+                        return;
+                    }
+
                     if (outputProgressToConsole) terminal(`package.json file ${filepath ? "was found at " + filepath : "was not found"}\n`);
+                    baseDir = path.dirname(filepath);
 
                     done(null, filepath);
                 });
@@ -113,7 +120,6 @@ export class LambdaPack {
             (requiredLocalFiles, done) => {
 
                 let filesToCopy = _.union(requiredLocalFiles, otherFiles);
-                let cwd = process.cwd();
 
                 let progressBar;
                 if (outputProgressToConsole) {
@@ -125,7 +131,7 @@ export class LambdaPack {
                 }
 
                 async.eachOfSeries(filesToCopy, (file, index, done) => {
-                    let copyToPath = path.join(tmpDir.name, file.replace(cwd, ""));
+                    let copyToPath = path.join(tmpDir.name, file.replace(baseDir, ""));
                     let filename = path.basename(file);
 
                     if (outputProgressToConsole) progressBar.startItem(filename);
@@ -173,7 +179,7 @@ export class LambdaPack {
 
                 fs.ensureDirSync(path.dirname(outputFileName));
 
-                zip.zip(tmpDir.name + "/.", path.resolve(process.cwd(), outputFileName), (error) => {
+                zip.zip(tmpDir.name + "/.", path.resolve(baseDir, outputFileName), (error) => {
                     if (outputProgressToConsole) {
                         progressBar.stop();
                         terminal.deleteLine(1);
@@ -193,7 +199,7 @@ export class LambdaPack {
                     }
                     else
                     {
-                        let handlerName = path.relative(process.cwd(), lambdaHandlerFilePath).replace(/.js$/, ".handler");
+                        let handlerName = path.relative(baseDir, lambdaHandlerFilePath).replace(/.js$/, ".handler");
                         terminal.blue("You can now upload the file ").yellow(outputFileName).blue(" to AWS Lambda and set the Handler to ").yellow(handlerName).blue(".\n");
                     }
                 }

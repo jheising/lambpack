@@ -23,8 +23,13 @@ class LambdaPack {
                 findUp("package.json", {
                     cwd: baseDir
                 }).then(filepath => {
+                    if (_.isNil(filepath)) {
+                        done("No package.json file found in parent directory.");
+                        return;
+                    }
                     if (outputProgressToConsole)
                         terminal_kit_1.terminal(`package.json file ${filepath ? "was found at " + filepath : "was not found"}\n`);
+                    baseDir = path.dirname(filepath);
                     done(null, filepath);
                 });
             },
@@ -92,7 +97,6 @@ class LambdaPack {
             },
             (requiredLocalFiles, done) => {
                 let filesToCopy = _.union(requiredLocalFiles, otherFiles);
-                let cwd = process.cwd();
                 let progressBar;
                 if (outputProgressToConsole) {
                     if (outputProgressToConsole)
@@ -103,7 +107,7 @@ class LambdaPack {
                     });
                 }
                 async.eachOfSeries(filesToCopy, (file, index, done) => {
-                    let copyToPath = path.join(tmpDir.name, file.replace(cwd, ""));
+                    let copyToPath = path.join(tmpDir.name, file.replace(baseDir, ""));
                     let filename = path.basename(file);
                     if (outputProgressToConsole)
                         progressBar.startItem(filename);
@@ -150,7 +154,7 @@ class LambdaPack {
                     });
                 }
                 fs.ensureDirSync(path.dirname(outputFileName));
-                zip.zip(tmpDir.name + "/.", path.resolve(process.cwd(), outputFileName), (error) => {
+                zip.zip(tmpDir.name + "/.", path.resolve(baseDir, outputFileName), (error) => {
                     if (outputProgressToConsole) {
                         progressBar.stop();
                         terminal_kit_1.terminal.deleteLine(1);
@@ -165,7 +169,7 @@ class LambdaPack {
                         terminal_kit_1.terminal.error.red(`Error: ${error.toString()}`);
                     }
                     else {
-                        let handlerName = path.relative(process.cwd(), lambdaHandlerFilePath).replace(/.js$/, ".handler");
+                        let handlerName = path.relative(baseDir, lambdaHandlerFilePath).replace(/.js$/, ".handler");
                         terminal_kit_1.terminal.blue("You can now upload the file ").yellow(outputFileName).blue(" to AWS Lambda and set the Handler to ").yellow(handlerName).blue(".\n");
                     }
                 }
