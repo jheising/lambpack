@@ -17,6 +17,7 @@ $ lambpack
 
     -V, --version  output the version number
     -q, --quiet    quiet mode
+    -i, --include-aws  include your own aws-sdk (if you depend on it), otherwise the Lambda globally installed version will be used
     -h, --help     output usage information
 
 ```
@@ -26,6 +27,8 @@ $ lambpack
 `outputZipFileName` is the pathname of the .zip file you want to output the package.
 
 `otherFiles` is a space or comma separated list of additional files or directories you may want to include within the deployment .zip file.
+
+`-i, --include-aws`: Normally all Lambda functions have access to a globally installed `aws-sdk` package, so it's usually wasteful to upload it with your code (if you use it). However if there is a specific version in your package.json file that you want to use, you can use this switch to force it to include the one you specify. If you don't use `aws-sdk` at all in your code, then this switch won't really change anything.
 
 #### Example
 

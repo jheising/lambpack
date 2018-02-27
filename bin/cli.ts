@@ -20,6 +20,7 @@ commander
         otherFiles = _otherFiles;
     })
     .option("-q, --quiet", "quiet mode")
+    .option("-i, --include-aws", "include your own aws-sdk (if you depend on it), otherwise the Lambda globally installed version will be used")
     .parse(process.argv);
 
 if(_.isNil(lambdaHandlerFile) || _.isNil(outputZipFileName))
@@ -28,7 +29,7 @@ if(_.isNil(lambdaHandlerFile) || _.isNil(outputZipFileName))
     terminal.processExit(1);
 }
 
-LambdaPack.package(lambdaHandlerFile, otherFiles, outputZipFileName, !commander.quiet, true, (error) => {
+LambdaPack.package(lambdaHandlerFile, otherFiles, outputZipFileName, !commander.quiet, !commander.includeAws, (error) => {
     if(error)
     {
         terminal.processExit(1);
