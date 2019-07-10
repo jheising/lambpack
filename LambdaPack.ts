@@ -11,7 +11,7 @@ import * as zipper from "zip-local";
 import * as dependencyTree from 'dependency-tree';
 
 export class LambdaPack {
-    static package(lambdaHandlerFilePath: string, otherFiles: string[], outputFileName: string, outputProgressToConsole: boolean = true, excludeAWSSDK: boolean = true, callback?: (error: Error) => void) {
+    static package(lambdaHandlerFilePath: string, otherFiles: string[], outputFileName: string, outputProgressToConsole: boolean = true, excludeAWSSDK: boolean = true, flatten: boolean = false, callback?: (error: Error) => void) {
 
         let tmpDir;
         let baseDir = path.dirname(lambdaHandlerFilePath);
@@ -95,6 +95,19 @@ export class LambdaPack {
                     }
                 });
 
+                if (flatten) {
+                    const lambdaHandlerDirectory = path.dirname(lambdaHandlerFilePath);
+                    const invalidDependenciesAfterFlatten = requiredFiles.filter((file) => !file.includes(lambdaHandlerDirectory));
+
+                    if (invalidDependenciesAfterFlatten.length > 0) {
+                        done(
+                            "Cannot flatten directory since the handler requires relative dependecies which would break after flattening:\n" +
+                            invalidDependenciesAfterFlatten.join("\n") +
+                            "\n\nConsider removing the --flatten or -f option"
+                        );
+                    }
+                }
+
                 if (outputProgressToConsole)
                 {
                     for(let file of requiredFiles)
@@ -133,6 +146,11 @@ export class LambdaPack {
                 async.eachOfSeries(filesToCopy, (file, index, done) => {
                     let copyToPath = path.join(tmpDir.name, file.replace(baseDir, ""));
                     let filename = path.basename(file);
+
+                    if (flatten) {
+                        const lambdaHandlerDirectory = path.dirname(lambdaHandlerFilePath);
+                        copyToPath = copyToPath.replace(lambdaHandlerDirectory, '');
+                    }
 
                     if (outputProgressToConsole) progressBar.startItem(filename);
                     fs.copy(file, copyToPath, (error) => {
@@ -205,7 +223,8 @@ export class LambdaPack {
                     }
                     else
                     {
-                        let handlerName = path.relative(baseDir, lambdaHandlerFilePath).replace(/.js$/, ".handler");
+                        const lambdaHandlerFile = path.basename(lambdaHandlerFilePath);
+                        let handlerName = path.relative(baseDir, flatten ? lambdaHandlerFile : lambdaHandlerFilePath);
                         terminal.blue("You can now upload the file ").yellow(outputFileName).blue(" to AWS Lambda and set the Handler to ").yellow(handlerName).blue(".\n");
                     }
                 }
