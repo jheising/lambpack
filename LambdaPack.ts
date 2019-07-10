@@ -7,7 +7,7 @@ import * as async from "async";
 import * as findUp from "find-up";
 import * as tmp from "tmp";
 import * as isBuiltinModule from "is-builtin-module";
-import * as zip from "cross-zip";
+import * as zipper from "zip-local";
 import * as dependencyTree from 'dependency-tree';
 
 export class LambdaPack {
@@ -179,13 +179,19 @@ export class LambdaPack {
 
                 fs.ensureDirSync(path.dirname(outputFileName));
 
-                zip.zip(tmpDir.name + "/.", path.resolve(baseDir, outputFileName), (error) => {
-                    if (outputProgressToConsole) {
-                        progressBar.stop();
-                        terminal.deleteLine(1);
-                    }
-                    done(error);
-                });
+                let error;
+                try {
+                    zipper.sync.zip(tmpDir.name + "/.").compress().save(path.resolve(baseDir, outputFileName));
+                } catch (err) {
+                    error = err;
+                }
+
+                if (outputProgressToConsole) {
+                    progressBar.stop();
+                    terminal.deleteLine(1);
+                }
+
+                done(error);
             }
         ], (error) => {
 

@@ -9,7 +9,7 @@ const async = require("async");
 const findUp = require("find-up");
 const tmp = require("tmp");
 const isBuiltinModule = require("is-builtin-module");
-const zip = require("cross-zip");
+const zipper = require("zip-local");
 const dependencyTree = require("dependency-tree");
 class LambdaPack {
     static package(lambdaHandlerFilePath, otherFiles, outputFileName, outputProgressToConsole = true, excludeAWSSDK = true, callback) {
@@ -154,13 +154,18 @@ class LambdaPack {
                     });
                 }
                 fs.ensureDirSync(path.dirname(outputFileName));
-                zip.zip(tmpDir.name + "/.", path.resolve(baseDir, outputFileName), (error) => {
-                    if (outputProgressToConsole) {
-                        progressBar.stop();
-                        terminal_kit_1.terminal.deleteLine(1);
-                    }
-                    done(error);
-                });
+                let error;
+                try {
+                    zipper.sync.zip(tmpDir.name + "/.").compress().save(path.resolve(baseDir, outputFileName));
+                }
+                catch (err) {
+                    error = err;
+                }
+                if (outputProgressToConsole) {
+                    progressBar.stop();
+                    terminal_kit_1.terminal.deleteLine(1);
+                }
+                done(error);
             }
         ], (error) => {
             function finish() {
