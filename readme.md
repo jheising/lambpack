@@ -17,6 +17,7 @@ $ lambpack
 
     -V, --version  output the version number
     -q, --quiet    quiet mode
+    -f, --flatten  flatten the lambda path so the resulting handler is at the root of the zip
     -i, --include-aws  include your own aws-sdk (if you depend on it), otherwise the Lambda globally installed version will be used
     -h, --help     output usage information
 
@@ -29,6 +30,8 @@ $ lambpack
 `otherFiles` is a space or comma separated list of additional files or directories you may want to include within the deployment .zip file.
 
 `-i, --include-aws`: Normally all Lambda functions have access to a globally installed `aws-sdk` package, so it's usually wasteful to upload it with your code (if you use it). However if there is a specific version in your package.json file that you want to use, you can use this switch to force it to include the one you specify. If you don't use `aws-sdk` at all in your code, then this switch won't really change anything.
+
+`-f, --flatten`: lambpack normally preserves the location of all files and recreates this structure in the zip. If you use a monorepo approach and have multiple lambda functions inside different folders in can get tedious to keep the name of the handler inside AWS in sync with the folder structure. This options will flatten the resulting directories and place your function at the root of the zip. You can then simply specify the name of the handler like `index-handler.js` instead of `functions/function-one/index-handler.js`. If any required dependencies would break as a result of this the client fails with a warning to remove this option.
 
 #### Example
 
