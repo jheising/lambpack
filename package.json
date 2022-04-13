@@ -24,7 +24,7 @@
     "lambpack": "bin/cli.js"
   },
   "dependencies": {
-    "async": "^2.6.0",
+    "async": "^3.2.2",
     "commander": "^2.14.1",
     "cross-zip": "^2.1.5",
     "dependency-tree": "^6.0.0",
